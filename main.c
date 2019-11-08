@@ -30,30 +30,22 @@ void tracePathByTheUserEntered();
 
 void main()
 {
-    //read file from the file
-    fptr = fopen("C:/Users/cemgg/Documents/GitHub/Binary-Search-Trees/input.txt","r");
+    int data=0, val;
 
-    //if file does not exist
-    if(fptr == NULL){
-        printf("Couldn't open the file");
-        exit(-1);
-    }
-    int data=0;
-
-    //initializing a temporary node
-    node *tmp;
-
-    /* Inserting nodes into tree */
-
-    for(; fscanf(fptr, "%d", &data) && !feof(fptr);)
+    char str[200];
+    gets(str);
+    char * pch;
+    pch = strtok (str," ,.-");
+    while (pch != NULL)
     {
-        root = insert(root,data);
+        printf ("%s\n",pch);
+        val = atoi(pch);
+        root = insert(root, val);
+        pch = strtok (NULL, " ,.-");
     }
 
-    root = insert(root,data); //inserting last element in the text file
-
-    /* Printing nodes of tree in LMNR fashion */
-    printf("lmnr display\n");
+    /* Printing nodes of tree in LNR fashion */
+    printf("lnr display\n");
     print_lnr(root);
 
     printf("Press (1) to delete a node\nPress(2) to trace path of a nodepress\n(-1) to exit\nDecision: ");
