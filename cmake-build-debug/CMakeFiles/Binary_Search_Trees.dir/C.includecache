@@ -1,0 +1,16 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+C:/Users/cemgg/Documents/GitHub/Binary-Search-Trees/main.c
+stdlib.h
+-
+stdio.h
+-
+string.h
+-
+

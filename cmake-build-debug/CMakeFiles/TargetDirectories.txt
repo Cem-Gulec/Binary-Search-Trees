@@ -1,0 +1,3 @@
+C:/Users/cemgg/Documents/GitHub/Binary-Search-Trees/cmake-build-debug/CMakeFiles/Binary_Search_Trees.dir
+C:/Users/cemgg/Documents/GitHub/Binary-Search-Trees/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/cemgg/Documents/GitHub/Binary-Search-Trees/cmake-build-debug/CMakeFiles/rebuild_cache.dir
