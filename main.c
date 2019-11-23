@@ -7,7 +7,6 @@
 struct bst_tree {
     int data;
     struct bst_tree *left, *right;
-    int depthLevel;
 };
 typedef struct bst_tree node;
 
@@ -27,29 +26,21 @@ int checkTerm(int val);
 int checkDepth(node *tree, int val, int level);
 void deleteByTheUserEntered();
 void tracePathByTheUserEntered();
+void splitString(char []);
 
 void main()
 {
-    int data=0, val;
+    int data=0;
 
     char str[200];
     gets(str);
-    char * pch;
-    pch = strtok (str," ,.-");
-    while (pch != NULL)
-    {
-        printf ("%s\n",pch);
-        val = atoi(pch);
-        root = insert(root, val);
-        pch = strtok (NULL, " ,.-");
-    }
+    splitString(str);
 
     /* Printing nodes of tree in LNR fashion */
     printf("lnr display\n");
     print_lnr(root);
 
     printf("Press (1) to delete a node\nPress(2) to trace path of a nodepress\n(-1) to exit\nDecision: ");
-
     scanf("%d",&decision);
 
     while(decision != -1){
@@ -92,16 +83,13 @@ node * insert(node * tree, int val){
     else if( val >= tree->data ){
             tree->right =  insert(tree->right,val);
 
-
     }else{}
 
     return tree;
-
 }
 
 //deleting a node
 node * delete(node * tree, int val){
-
     // base case
     if (tree == NULL) return tree;
 
@@ -148,14 +136,11 @@ node * delete(node * tree, int val){
 
 //print all the nodes in LNR fashion
 void print_lnr(node * tree){
-    if (tree)
-    {
+    if (tree){
         print_lnr(tree->left);
         printf("%d\n",tree->data);
         print_lnr(tree->right);
-
     }
-
 }
 
 //get left most node by iterating recursively
@@ -178,7 +163,6 @@ node * getMax(node *tree){
 
 //trace path of the wanted node, same way as declared in insert function
 node * tracePath(node *tree, int val){
-
     //print the root
     printWithCondition(tree,val);
     //if there exists nodes
@@ -195,26 +179,21 @@ node * tracePath(node *tree, int val){
                     tree->right =  tracePath(tree->right,val);
                     printWithCondition(tree,val);
 
-
             }else{}
             return tree;
         }
-
     }
 }
 
 //in order to delete last "->" symbol, defined following conditions
 void printWithCondition(node *tree, int val){
-
     //if we reached the data on the path, no more "->" is needed
     if(tree->data == val){
         printf("%d", tree->data);
-
     }
     else{
         printf("%d -> ",tree->data);
     }
-
 }
 
 //this function checks if the term is exist
@@ -226,13 +205,11 @@ int checkTerm(int val){
         if(numArray[i] == val)
             return 1;
     }
-
     return 0;
 }
 
 //return the level of wanted node
 int checkDepth(node *tree, int val, int depthLevel){
-
     //if not a single node exists
     if(tree == NULL)
         return 0;
@@ -244,7 +221,6 @@ int checkDepth(node *tree, int val, int depthLevel){
     //if not found recursively look the other branches
     return checkDepth(tree->left, val, depthLevel+1)
            | checkDepth(tree->right, val, depthLevel+1);
-
 }
 
 void deleteByTheUserEntered(){
@@ -253,8 +229,7 @@ void deleteByTheUserEntered(){
     scanf("%d",&num);
 
     //if it does exist
-    if(checkTerm(num) == 1)
-    {
+    if(checkTerm(num) == 1){
         //assign the last form into root
         root = delete(root, num);
         printf("\ndeleted\n**re-construct tree by the new formation**\nlnr display\n");
@@ -272,12 +247,24 @@ void tracePathByTheUserEntered(){
     scanf("%d",&num);
 
     //if selected value does exist, look through its path and depth information
-    if(checkTerm(num) == 1)
-    {
+    if(checkTerm(num) == 1){
         printf("found in the depth level: %d",checkDepth(root,num,1));
         printf("\nand traced with the following path:  ");
         tracePath(root,num);
     }
     else
         printf("does not exist\n\n");
+}
+
+void splitString(char string[]){
+
+    int val;
+    char * pch;
+    pch = strtok (string," ,.-");
+    while (pch != NULL)
+    {
+        val = atoi(pch);
+        root = insert(root, val);
+        pch = strtok (NULL, " ,.-");
+    }
 }
