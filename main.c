@@ -1,4 +1,17 @@
-/*Designed and programmed by - Cem Gulec - 150117828*/
+/*Designed and programmed by - Cem Gulec - 150117828
+ *
+ * Constructed tree:
+ *                18
+ *         /              \
+ *       12                36
+ *      /  \              /  \
+ *     8    16          24    72
+ *    /    /  \        /     /
+ *   4   14    17     20    54
+ *  /     \             \
+ * 2       15            21
+ *
+ * */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -20,8 +33,11 @@ node * delete(node * tree, int val);
 void print_lnr(node * tree);
 node * getMin(node *tree);
 node * getMax(node *tree);
-node * tracePath(node *tree, int val);
-void printWithCondition(node *tree, int val);
+int getMaxDepth(node *tree);
+int getSizeLeft(node * tree);
+int getSizeRight(node * tree);
+int getSize(node * tree);
+node * traceNode (node *tree, int val);
 int checkTerm(int val);
 int checkDepth(node *tree, int val, int level);
 void deleteByTheUserEntered();
@@ -30,15 +46,19 @@ void splitString(char []);
 
 void main()
 {
-    int data=0;
-
     char str[200];
+    printf("Enter your sequence of numbers: ");
     gets(str);
     splitString(str);
 
     /* Printing nodes of tree in LNR fashion */
-    printf("lnr display\n");
+    printf("LNR display\n");
     print_lnr(root);
+    printf("\nmax depth level: %d\n",getMaxDepth(root));
+    printf("\nleft size of the root:%d\n",getSizeLeft(traceNode(root,36)));
+    printf("\nright size of the root:%d\n",getSizeRight(traceNode(root,36)));
+    printf("\nsize of the root: %d\n",getSize(traceNode(root,36)));
+    printf("depth level: %d\n",checkDepth(root,72,1));
 
     printf("Press (1) to delete a node\nPress(2) to trace path of a nodepress\n(-1) to exit\nDecision: ");
     scanf("%d",&decision);
@@ -55,13 +75,10 @@ void main()
                 exit(-1);
         }
 
-        printf("Press (1) to delete a node\nPress(2) to trace path of a nodepress\n(-1) to exit\nDecision: ");
+        printf("\nPress (1) to delete a node\nPress(2) to trace path of a nodepress\n(-1) to exit\nDecision: ");
         scanf("%d",&decision);
 
     }
-
-
-
     fclose(fptr);
 }
 
@@ -161,39 +178,72 @@ node * getMax(node *tree){
     return currentNode;
 }
 
-//trace path of the wanted node, same way as declared in insert function
-node * tracePath(node *tree, int val){
-    //print the root
-    printWithCondition(tree,val);
-    //if there exists nodes
-    while(tree!=NULL){
-        //if not found yet
-        if(tree->data!=val){
-            //look through its left branch and print
-            if( val < tree->data ){
-                tree->left = tracePath(tree->left,val);
-                printWithCondition(tree,val);
-            }
-            else if( val >= tree->data ){
-                //look through its right branch and print
-                    tree->right =  tracePath(tree->right,val);
-                    printWithCondition(tree,val);
+//a function to find out max depth level
+int getMaxDepth(node *tree){
+    if (tree==NULL)
+        return 0;
+    else
+    {
+        /* compute the depth of each subtree */
+        int left_depth = getMaxDepth(tree->left);
+        int right_depth = getMaxDepth(tree->right);
 
-            }else{}
-            return tree;
-        }
+        /* use the larger one */
+        if (left_depth > right_depth)
+            return(left_depth+1);
+        else return(right_depth+1);
     }
 }
 
-//in order to delete last "->" symbol, defined following conditions
-void printWithCondition(node *tree, int val){
-    //if we reached the data on the path, no more "->" is needed
-    if(tree->data == val){
-        printf("%d", tree->data);
+int getSizeLeft(node * tree){
+    if (tree==NULL)
+        return 0;
+    else
+    {
+        int count = 0;
+        if (tree->left != NULL)
+            count += 1 + getSizeLeft(tree->left);
+        if (tree->right != NULL)
+            count += getSizeLeft(tree->right);
+        return count;
     }
-    else{
-        printf("%d -> ",tree->data);
+}
+
+int getSizeRight(node * tree){
+    if (tree==NULL)
+        return 0;
+    else
+    {
+        int count = 0;
+        if (tree->left != NULL)
+            count += getSizeRight(tree->left);
+        if (tree->right != NULL)
+            count += 1 + getSizeRight(tree->right);
+        return count;
     }
+}
+
+//a function to learn size of a node
+int getSize(node * tree){
+    if (tree==NULL)
+        return 0;
+    else
+    {
+        int left_size = getSize(tree->left);
+        int right_size = getSize(tree->right);
+        return (left_size + right_size +1);
+    }
+}
+
+//trace a node and return it
+node * traceNode (node *tree, int val){
+    if (tree == NULL || tree->data == val)
+        return tree;
+
+    if (tree->data < val)
+        return traceNode(tree->right, val);
+
+    return traceNode(tree->left, val);
 }
 
 //this function checks if the term is exist
@@ -247,11 +297,8 @@ void tracePathByTheUserEntered(){
     scanf("%d",&num);
 
     //if selected value does exist, look through its path and depth information
-    if(checkTerm(num) == 1){
+    if(checkTerm(num) == 1)
         printf("found in the depth level: %d",checkDepth(root,num,1));
-        printf("\nand traced with the following path:  ");
-        tracePath(root,num);
-    }
     else
         printf("does not exist\n\n");
 }
