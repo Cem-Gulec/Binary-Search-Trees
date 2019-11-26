@@ -16,9 +16,16 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 
 struct bst_tree {
     int data;
+    int left_size;
+    int right_size;
+    int total_size;
+    int depth;
+    int topology_num;
+    int ord;
     struct bst_tree *left, *right;
 };
 typedef struct bst_tree node;
@@ -28,21 +35,28 @@ int numArray[20], i=0, num, decision;
 FILE *fptr;
 
 /*prototypes*/
-node * insert(node * tree, int val);
-node * delete(node * tree, int val);
-void print_lnr(node * tree);
-node * getMin(node *tree);
-node * getMax(node *tree);
-int getMaxDepth(node *tree);
-int getSizeLeft(node * tree);
-int getSizeRight(node * tree);
-int getSize(node * tree);
-node * traceNode (node *tree, int val);
-int checkTerm(int val);
-int checkDepth(node *tree, int val, int level);
+node * insert(node *, int);
+node * delete(node *, int);
+void print_lnr(node *);
+node * getMin(node *);
+node * getMax(node *);
+int getMaxDepth(node *);
+int getSize(node *);
+int getDifTopology(int);
+int calculateCatalan(int);
+int binomialCoeF(int,int);
+unsigned int factorial(unsigned int);
+node * traceNode (node *, int );
+int checkTerm(int);
+int checkDepth(node *, int, int);
 void deleteByTheUserEntered();
 void tracePathByTheUserEntered();
 void splitString(char []);
+void assignDepths(node *);
+void assignSize(node *);
+void assignSizeLR(node *);
+void assignTopology(node *);
+void assignOrd(node *);
 
 void main()
 {
@@ -52,15 +66,17 @@ void main()
     splitString(str);
 
     /* Printing nodes of tree in LNR fashion */
+    assignDepths(root);
+    assignSize(root);
+    assignSizeLR(root);
+    assignTopology(root);
+    assignOrd(root);
     printf("LNR display\n");
     print_lnr(root);
     printf("\nmax depth level: %d\n",getMaxDepth(root));
-    printf("\nleft size of the root:%d\n",getSizeLeft(traceNode(root,36)));
-    printf("\nright size of the root:%d\n",getSizeRight(traceNode(root,36)));
     printf("\nsize of the root: %d\n",getSize(traceNode(root,36)));
-    printf("depth level: %d\n",checkDepth(root,72,1));
-
-    printf("Press (1) to delete a node\nPress(2) to trace path of a nodepress\n(-1) to exit\nDecision: ");
+    printf("\ndepth level: %d\n",checkDepth(root,36,1));
+    printf("\nPress (1) to delete a node\nPress(2) to trace path of a nodepress\n(-1) to exit\nDecision: ");
     scanf("%d",&decision);
 
     while(decision != -1){
@@ -155,7 +171,8 @@ node * delete(node * tree, int val){
 void print_lnr(node * tree){
     if (tree){
         print_lnr(tree->left);
-        printf("%d\n",tree->data);
+        printf("%d - d_l:%d - #left:%d - #right:%d - #total_size:%d - #topology:%d - ord:%d\n",tree->data, tree->depth,
+                tree->left_size, tree->right_size, tree->total_size, tree->topology_num, tree->ord);
         print_lnr(tree->right);
     }
 }
@@ -195,34 +212,6 @@ int getMaxDepth(node *tree){
     }
 }
 
-int getSizeLeft(node * tree){
-    if (tree==NULL)
-        return 0;
-    else
-    {
-        int count = 0;
-        if (tree->left != NULL)
-            count += 1 + getSizeLeft(tree->left);
-        if (tree->right != NULL)
-            count += getSizeLeft(tree->right);
-        return count;
-    }
-}
-
-int getSizeRight(node * tree){
-    if (tree==NULL)
-        return 0;
-    else
-    {
-        int count = 0;
-        if (tree->left != NULL)
-            count += getSizeRight(tree->left);
-        if (tree->right != NULL)
-            count += 1 + getSizeRight(tree->right);
-        return count;
-    }
-}
-
 //a function to learn size of a node
 int getSize(node * tree){
     if (tree==NULL)
@@ -233,6 +222,46 @@ int getSize(node * tree){
         int right_size = getSize(tree->right);
         return (left_size + right_size +1);
     }
+}
+
+//a function to calculate number of topologies of a given node
+int getDifTopology(int node_size){
+    //node *tmp = traceNode();
+    int count = calculateCatalan(node_size);
+
+    return count;
+
+
+}
+
+int calculateCatalan(int node_size){
+    double c = binomialCoeF(2*node_size, node_size);
+    double temp = c / (node_size+1);
+
+    return floor(temp);
+}
+
+int binomialCoeF(int node_size, int k){
+    int index, res = 1;
+
+    //C(n, k) = C(n, n-k)
+    if (k > (node_size-k))
+        k = node_size-k;
+
+    // Calculate value of [n*(n-1)*---*(n-k+1)] /
+    // [k*(k-1)*---*1]
+    for (index=0; index<k; index++){
+        res *= (node_size-index);
+        res = floor(res/(index+1));
+    }
+
+    return res;
+}
+
+unsigned int factorial(unsigned int n){
+    if (n == 0)
+        return 1;
+    return n * factorial(n - 1);
 }
 
 //trace a node and return it
@@ -314,4 +343,75 @@ void splitString(char string[]){
         root = insert(root, val);
         pch = strtok (NULL, " ,.-");
     }
+}
+
+void assignDepths(node *currentPtr){
+    if (currentPtr){
+        assignDepths(currentPtr->left);
+        currentPtr->depth = checkDepth(root,currentPtr->data,1);
+        assignDepths(currentPtr->right);
+    }
+}
+
+void assignSize(node *currentPtr){
+    if (currentPtr){
+        assignSize(currentPtr->left);
+        currentPtr->total_size = getSize(traceNode(root,currentPtr->data));
+        assignSize(currentPtr->right);
+    }
+}
+
+void assignSizeLR(node *currentPtr){
+    if(currentPtr && currentPtr->left  && currentPtr->right){
+        assignSizeLR(currentPtr->left);
+        currentPtr->left_size = currentPtr->left->total_size;
+        currentPtr->right_size = currentPtr->right->total_size;
+        assignSizeLR(currentPtr->right);
+    }
+    else if(currentPtr && currentPtr->left && currentPtr->right == NULL){
+        assignSizeLR(currentPtr->left);
+        currentPtr->left_size = currentPtr->left->total_size;
+        currentPtr->right_size = 0;
+        assignSizeLR(currentPtr->right);
+    }
+    else if(currentPtr && currentPtr->left == NULL && currentPtr->right){
+        assignSizeLR(currentPtr->left);
+        currentPtr->left_size = 0;
+        currentPtr->right_size = currentPtr->right->total_size;
+        assignSizeLR(currentPtr->right);
+    }
+    else if(currentPtr && currentPtr->left == NULL && currentPtr->right == NULL){
+        assignSizeLR(currentPtr->left);
+        currentPtr->left_size = 0;
+        currentPtr->right_size = 0;
+        assignSizeLR(currentPtr->right);
+    }
+}
+
+void assignTopology(node *currentPtr){
+    if (currentPtr){
+        assignTopology(currentPtr->left);
+        currentPtr->topology_num = getDifTopology(traceNode(root,currentPtr->data)->total_size-1);
+        assignTopology(currentPtr->right);
+    }
+}
+
+void assignOrd(node *tree){
+
+    int index1,index2;
+    int nodes[] = {18, 12, 8, 4, 2, 16, 14, 15, 17, 36, 24, 20, 21, 72, 54};
+    int maxDepth = getMaxDepth(root);
+
+    for (index1=maxDepth; index1>0; index1--)
+        for(index2=0 ; index2<tree->total_size; index2++){
+            node * temp = traceNode(tree,nodes[index2]);
+            if (temp->left == NULL && temp->right == NULL)
+                temp->ord = 1;
+
+            else if (temp->left && temp->right){
+                temp->ord = temp->left->ord * temp->right->ord * ((factorial(temp->left_size + temp->right_size)) / (factorial(temp->left_size)*factorial(temp->right_size)));
+            }
+            else if (temp->left || temp->right)
+                temp->ord = temp->topology_num;
+        }
 }
