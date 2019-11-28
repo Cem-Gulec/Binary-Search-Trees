@@ -11,6 +11,13 @@
  *  /     \             \
  * 2       15            21
  *
+ * TODO: output düzenlenecek
+ * TODO: assign order kısmında tüm nodeları arrayde tut iterative şekilde tüm nodeları trace et ve atama yap
+ * TODO: kodlar biraz daha düzenlenebilir
+ * TODO: yorumlama daha fazla eklenebilir
+ * TODO: main içi düzenle
+ * TODO: tracepath için bir seçenek sun
+ * TODO: 180bin sequence'in printlenmesi
  * */
 
 #include <stdlib.h>
@@ -109,7 +116,7 @@ node * insert(node * tree, int val){
         tree = tmp;
         tmp = NULL;
     }
-        //looking for the right place to put node, iterating through its left, middle and right branches
+    //looking for the right place to put node, iterating through its left, middle and right branches
     else if( val < tree->data ){
         tree->left = insert(tree->left,val);
     }
@@ -131,13 +138,13 @@ node * delete(node * tree, int val){
     if (val < tree->data)
         tree->left = delete(tree->left, val);
 
-        // If the key to be deleted is greater than the root's key,
-        // then it lies in right subtree
+    // If the key to be deleted is greater than the root's key,
+    // then it lies in right subtree
     else if (val > tree->data)
         tree->right = delete(tree->right, val);
 
-        // if key is same as root's key, then This is the node
-        // to be deleted
+    // if key is same as root's key, then This is the node
+    // to be deleted
     else
     {
         // node with only one child or no child
@@ -199,13 +206,12 @@ node * getMax(node *tree){
 int getMaxDepth(node *tree){
     if (tree==NULL)
         return 0;
-    else
-    {
-        /* compute the depth of each subtree */
+    else{
+        //compute the depth of each subtree
         int left_depth = getMaxDepth(tree->left);
         int right_depth = getMaxDepth(tree->right);
 
-        /* use the larger one */
+        //use the larger one
         if (left_depth > right_depth)
             return(left_depth+1);
         else return(right_depth+1);
@@ -216,8 +222,7 @@ int getMaxDepth(node *tree){
 int getSize(node * tree){
     if (tree==NULL)
         return 0;
-    else
-    {
+    else{
         int left_size = getSize(tree->left);
         int right_size = getSize(tree->right);
         return (left_size + right_size +1);
@@ -226,12 +231,9 @@ int getSize(node * tree){
 
 //a function to calculate number of topologies of a given node
 int getDifTopology(int node_size){
-    //node *tmp = traceNode();
     int count = calculateCatalan(node_size);
 
     return count;
-
-
 }
 
 int calculateCatalan(int node_size){
@@ -277,7 +279,6 @@ node * traceNode (node *tree, int val){
 
 //this function checks if the term is exist
 int checkTerm(int val){
-
     int i;
 
     for(i=0; i<20; i++){
@@ -312,10 +313,9 @@ void deleteByTheUserEntered(){
         //assign the last form into root
         root = delete(root, num);
         printf("\ndeleted\n**re-construct tree by the new formation**\nlnr display\n");
-
         print_lnr(root);
     }
-        //if does not exist
+    //if does not exist
     else
         printf("does not exist\n\n");
 }
@@ -333,7 +333,6 @@ void tracePathByTheUserEntered(){
 }
 
 void splitString(char string[]){
-
     int val;
     char * pch;
     pch = strtok (string," ,.-");
@@ -397,9 +396,8 @@ void assignTopology(node *currentPtr){
 }
 
 void assignOrd(node *tree){
-
     int index1,index2;
-    int nodes[] = {18, 12, 8, 4, 2, 16, 14, 15, 17, 36, 24, 20, 21, 72, 54};
+    int nodes[] = {50,30,20,40,70,80,60};
     int maxDepth = getMaxDepth(root);
 
     for (index1=maxDepth; index1>0; index1--)
