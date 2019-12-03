@@ -18,6 +18,7 @@
  * TODO: tracepath için bir seçenek sun
  * TODO: 180bin sequence'in printlenmesi
  * TODO: data rapor
+ * TODO: getdiftopology sileyim mi
  * */
 
 #include <stdlib.h>
@@ -59,7 +60,6 @@ int checkDepth(node *, int, int);
 void checkDepthByTheUserEntered();
 void getSizeByTheUserEntered();
 void insertByTheUserEntered();
-void deleteByTheUserEntered();
 void tracePathByTheUserEntered();
 void splitString(char []);
 void assignDepths(node *);
@@ -328,7 +328,7 @@ void checkDepthByTheUserEntered(){
 
     if(checkTerm(number) == 1){
         depth = checkDepth(root,number,1);
-        printf("\n\t\t\t**Depth level of \"%d\": %d\n",number,depth);
+        printf("\n\t\t\tDepth level of \"%d\": %d\n",number,depth);
     }
     else
         printf("\n\t\t\t**It doesn't exist in the tree**\n\t\t\tReturning back to selection panel\n\n");
@@ -375,7 +375,7 @@ void tracePathByTheUserEntered(){
 
     //if selected value does exist, look through its path and depth information
     if(checkTerm(num) == 1)
-        printf("Found in the depth level: %d",checkDepth(root,num,1));
+        printf("\n\t\t\tFound in the depth level: %d\n",checkDepth(root,num,1));
     else
         printf("\n\t\t\t**The number does not exist\n\t\t\tReturning back to selection panel\n\n");
 }
