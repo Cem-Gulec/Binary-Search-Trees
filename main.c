@@ -11,14 +11,6 @@
  *  /     \             \
  * 2       15            21
  *
- * TODO: output düzenlenecek
- * TODO: kodlar biraz daha düzenlenebilir
- * TODO: yorumlama daha fazla eklenebilir
- * TODO: main içi düzenle
- * TODO: tracepath için bir seçenek sun
- * TODO: 180bin sequence'in printlenmesi
- * TODO: data rapor
- * TODO: getdiftopology sileyim mi
  * */
 
 #include <stdlib.h>
@@ -32,7 +24,6 @@ struct bst_tree {
     int right_size;
     int total_size;
     int depth;
-    unsigned long long int topology_num;
     unsigned long long int ord;
     struct bst_tree *left, *right;
 };
@@ -57,6 +48,8 @@ unsigned long long int factorial(unsigned int);
 node * traceNode (node *, int );
 int checkTerm(int);
 int checkDepth(node *, int, int);
+int * checkChildren(node *);
+void printEverything(int [], int );
 void checkDepthByTheUserEntered();
 void getSizeByTheUserEntered();
 void insertByTheUserEntered();
@@ -69,7 +62,6 @@ void assignOrd(node *);
 
 void main()
 {
-    int insert_number;
     char str[200];
     printf("Enter your sequence of numbers: ");
     gets(str);
@@ -83,11 +75,13 @@ void main()
     assignOrd(root);
 
     /* Printing nodes of tree in LNR fashion */
-    printf("LNR display\n");
+    printf("\nLNR display\n");
     print_lnr(root);
+    //printEverything(checkChildren(root), root->data);
     printf("\nMax depth level: %d\n",getMaxDepth(root));
     printf("Min element of the tree: %d  |  Max element of the tree: %d\n", getMin(root)->data,getMax(root)->data);
     printf("Size of the root: %d  |  # of_left_nodes: %d  |  # of_right_nodes: %d\n",root->total_size, root->left_size, root->right_size);
+    printf("\nNumber of sequences yield the same BST topology: %llu\n",root->ord);
     printf("\nPress (1) to insert a node\nPress (2) to trace path of a node\n"
            "Press (3) to get size of a node\nPress (4) check depth of a node\n      (-1) to exit\nDecision: ");
     scanf("%d",&decision);
@@ -195,8 +189,8 @@ node * delete(node * tree, int val){
 void print_lnr(node * tree){
     if (tree){
         print_lnr(tree->left);
-        printf("%d -> d_l:%d - #left:%d - #right:%d - #total_size:%d - ord:%llu\n",tree->data, tree->depth,
-                tree->left_size, tree->right_size, tree->total_size, tree->ord);
+        printf("%d -> depth_level:%d - #left_nodes:%d - #right_nodes:%d - #total_size:%d\n",tree->data, tree->depth,
+                tree->left_size, tree->right_size, tree->total_size);
         print_lnr(tree->right);
     }
 }
@@ -321,6 +315,31 @@ int checkDepth(node *tree, int val, int depthLevel){
            | checkDepth(tree->right, val, depthLevel+1);
 }
 
+int * checkChildren(node *tree){
+    static int temp[50];
+    int index = 0;
+    if (tree->left){
+        temp[index] = tree->left->data;
+        index++;
+    }
+    if(tree->right){
+        temp[index] = tree->right->data;
+        index++;
+    }
+    return temp;
+}
+
+void printEverything(int arr[], int value){
+    char string[100], word[5];
+    /*int size = (int)(sizeof(arr) / sizeof(arr[0]));
+    itoa(value, word, 10);
+    strcpy(string, word);
+
+    if(size == 0){
+
+    }*/
+}
+
 void checkDepthByTheUserEntered(){
     int number,depth;
     printf("Which node's depth information: ");
@@ -363,6 +382,7 @@ void insertByTheUserEntered(){
         printf("\nMax depth level: %d\n",getMaxDepth(root));
         printf("Min element of the tree: %d  |  Max element of the tree: %d\n", getMin(root)->data,getMax(root)->data);
         printf("Size of the root: %d  |  # of_left_nodes: %d  |  # of_right_nodes: %d\n",root->total_size, root->left_size, root->right_size);
+        printf("\nNumber of sequences yield the same BST topology: %llu\n",root->ord);
     }
     else
         printf("\n\t\t\t**It already exists in tree**\n\t\t\tReturning back to selection panel\n\n");
