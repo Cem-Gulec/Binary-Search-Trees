@@ -1,1 +1,1 @@
-# Binary-Search-Trees
+**Course name**: Data Structures (CSE2025)
